@@ -1,28 +1,28 @@
-import nodemailer from 'nodemailer'
+// Conditional email functionality to prevent build-time errors
+let transporter: any = null
 
-// Email configuration
-const emailConfig = {
-  host: process.env.EMAIL_SERVER_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.EMAIL_SERVER_PORT || '587'),
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.EMAIL_SERVER_USER,
-    pass: process.env.EMAIL_SERVER_PASSWORD,
-  },
-}
-
-// Create reusable transporter
-const transporter = nodemailer.createTransporter(emailConfig)
-
-// Verify email configuration on startup (in development only)
-if (process.env.NODE_ENV === 'development') {
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error('Email configuration error:', error)
-    } else {
-      console.log('Email server is ready to send messages')
+const getTransporter = async () => {
+  if (transporter) return transporter
+  
+  try {
+    const nodemailer = await import('nodemailer')
+    
+    const emailConfig = {
+      host: process.env.EMAIL_SERVER_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.EMAIL_SERVER_PORT || '587'),
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
+      },
     }
-  })
+    
+    transporter = nodemailer.default.createTransporter(emailConfig)
+    return transporter
+  } catch (error) {
+    console.warn('Email functionality not available:', error)
+    return null
+  }
 }
 
 export async function sendVerificationEmail(
@@ -30,6 +30,12 @@ export async function sendVerificationEmail(
   userName: string,
   token: string
 ) {
+  const transporter = await getTransporter()
+  if (!transporter) {
+    console.warn('Email transporter not available, skipping verification email')
+    return
+  }
+  
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3001'
   const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${token}`
 
@@ -227,6 +233,12 @@ export async function sendVerificationEmail(
 }
 
 export async function sendWelcomeEmail(to: string, userName: string) {
+  const transporter = await getTransporter()
+  if (!transporter) {
+    console.warn('Email transporter not available, skipping welcome email')
+    return
+  }
+  
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3001'
 
   const htmlContent = `
@@ -356,6 +368,12 @@ export async function sendPasswordResetEmail(
   userName: string,
   token: string
 ) {
+  const transporter = await getTransporter()
+  if (!transporter) {
+    console.warn('Email transporter not available, skipping password reset email')
+    throw new Error('Email service unavailable')
+  }
+  
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3001'
   const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`
 
