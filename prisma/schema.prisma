@@ -1,0 +1,303 @@
+// Prisma schema for Irreplaceable MVP
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?  // Optional for social logins
+  firstName String?
+  lastName  String?
+  name      String?
+  
+  // Profile information
+  location  String?
+  zipCode   String?
+  skills    String? // JSON array of skills
+  experience String? // Years of experience
+  education  String?
+  careerInterests String? // JSON array of career categories
+  birthYear Int?
+  
+  // Authentication
+  emailVerified DateTime?
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret String?
+  
+  // Age verification
+  ageVerified Boolean @default(false)
+  dateOfBirth DateTime?
+  subscribeNewsletter Boolean @default(false)
+  
+  // Profile relation
+  profile UserProfile?
+  
+  // Social logins
+  accounts Account[]
+  sessions Session[]
+  
+  // User activity
+  savedJobs SavedJob[]
+  jobApplications JobApplication[]
+  quizResults QuizResult[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+}
+
+model UserProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  bio           String?
+  location      String?
+  skills        String?  // JSON array of skills
+  interests     String?  // JSON array of interests
+  careerGoals   String?  // JSON array of career goals
+  experience    String?  // entry_level, mid_level, senior_level
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("user_profiles")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  description String
+  location    String
+  zipCode     String?
+  salary      String?
+  experience  String?
+  education   String?
+  category    String   // AI-resistant category
+  source      String   // indeed, linkedin, etc.
+  sourceUrl   String   // Original job posting URL
+  applyUrl    String?  // Direct application link
+  
+  // Job metadata
+  keywords    String? // JSON array for search/matching
+  isRemote    Boolean  @default(false)
+  isScam      Boolean  @default(false)
+  reportCount Int      @default(0)
+  
+  // Tracking
+  savedBy     SavedJob[]
+  applications JobApplication[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  expiresAt   DateTime? // When job expires
+  
+  @@map("jobs")
+}
+
+model SavedJob {
+  id     String @id @default(cuid())
+  userId String
+  jobId  String
+  notes  String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, jobId])
+  @@map("saved_jobs")
+}
+
+model JobApplication {
+  id        String @id @default(cuid())
+  userId    String
+  jobId     String
+  status    String @default("applied") // applied, interview, rejected, offer
+  appliedAt DateTime @default(now())
+  notes     String?
+  reminder  DateTime?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, jobId])
+  @@map("job_applications")
+}
+
+model CareerCategory {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  icon        String?
+  aiResistance String // High, Medium, Low
+  
+  // Business education content
+  educationContent EducationContent[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("career_categories")
+}
+
+model EducationContent {
+  id          String @id @default(cuid())
+  title       String
+  description String?
+  content     String   // Markdown content
+  type        String   // article, video, guide, resource
+  url         String?  // External URL if applicable
+  categoryId  String
+  
+  category CareerCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  // Metadata
+  source      String?  // Where content was scraped from
+  difficulty  String?  // beginner, intermediate, advanced
+  duration    Int?     // Minutes to complete
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("education_content")
+}
+
+model Quiz {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  type        String @default("assessment") // assessment, detailed
+  questions   QuizQuestion[]
+  results     QuizResult[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id       String   @id @default(cuid())
+  quizId   String
+  question String
+  options  String   // JSON array of answer options
+  weights  String   // JSON mapping options to career category weights
+  order    Int
+  
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  @@map("quiz_questions")
+}
+
+model QuizResult {
+  id          String @id @default(cuid())
+  userId      String
+  quizId      String
+  answers     String   // JSON array of selected answers
+  results     String   // JSON object with career category scores
+  completedAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  @@map("quiz_results")
+}
+
+model JobReport {
+  id       String @id @default(cuid())
+  jobId    String
+  userId   String?
+  reason   String // scam, inappropriate, etc.
+  details  String?
+  status   String @default("pending") // pending, reviewed, resolved
+  
+  createdAt DateTime @default(now())
+  
+  @@map("job_reports")
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  active    Boolean  @default(true)
+  source    String?  // Where they signed up from
+  createdAt DateTime @default(now())
+  
+  @@map("newsletter_subscribers")
+}
+
+model BetaUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  invited   Boolean  @default(false)
+  invitedAt DateTime?
+  createdAt DateTime @default(now())
+  
+  @@map("beta_users")
+}
+
+model ContactSubmission {
+  id       String @id @default(cuid())
+  name     String
+  email    String
+  subject  String
+  category String @default("general")
+  message  String
+  status   String @default("pending") // pending, in_progress, resolved
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("contact_submissions")
+}
