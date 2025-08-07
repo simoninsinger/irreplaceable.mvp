@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Shield, AlertCircle, ArrowLeft } from "lucide-react"
@@ -59,7 +60,7 @@ const errorMessages: Record<string, { title: string; description: string }> = {
   }
 }
 
-export default function AuthError() {
+function AuthErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get("error") || "Default"
   
@@ -131,5 +132,30 @@ export default function AuthError() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthError() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-lg shadow-xl p-8 text-center">
+            <div className="mb-8">
+              <Link href="/" className="flex items-center justify-center space-x-2 mb-6">
+                <Shield className="h-8 w-8 text-blue-600" />
+                <span className="text-2xl font-bold text-gray-900">Irreplaceable</span>
+              </Link>
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <AuthErrorContent />
+    </Suspense>
   )
 }
