@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AdzunaAPI, SEED_JOBS, AI_RESISTANT_KEYWORDS, JobListing } from '@/lib/job-apis'
+import { JobAggregator, AI_RESISTANT_QUERIES } from '@/lib/job-scrapers'
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,40 +19,46 @@ export async function GET(request: NextRequest) {
     // Always include seed jobs for immediate content
     jobs = [...SEED_JOBS]
 
-    // Try to fetch from Adzuna API if credentials are available
-    if (process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY) {
-      try {
-        const adzunaAPI = new AdzunaAPI(
-          process.env.ADZUNA_APP_ID,
-          process.env.ADZUNA_APP_KEY
-        )
+    // Initialize job aggregator for multiple sources
+    const jobAggregator = new JobAggregator()
+    
+    try {
+      // Use specific query or default AI-resistant queries
+      const searchQueries = query && query !== 'nurse electrician teacher therapist' 
+        ? [query] 
+        : AI_RESISTANT_QUERIES.slice(0, 6) // Use first 6 queries to avoid rate limits
 
-        // Search for AI-resistant job keywords
-        const aiResistantQueries = [
-          'nurse healthcare',
-          'electrician plumber',
-          'teacher education',
-          'therapist counselor',
-          'chef cook restaurant',
-          'mechanic technician'
-        ]
+      console.log(`Fetching jobs from sources: ${jobAggregator.getEnabledSources().join(', ')}`)
+      
+      // Fetch from all enabled sources
+      const aggregatedJobs = await jobAggregator.aggregateJobs(searchQueries, location)
+      jobs.push(...aggregatedJobs)
 
-        for (const searchQuery of aiResistantQueries.slice(0, 2)) { // Limit to 2 queries to avoid rate limits
-          try {
-            const apiJobs = await adzunaAPI.searchJobs(searchQuery, location, 1, 20)
-            // Filter for high AI-resistance scores
-            const filteredJobs = apiJobs.filter(job => job.aiResistanceScore >= 6)
-            jobs.push(...filteredJobs)
-            
-            // Add small delay between requests
-            await new Promise(resolve => setTimeout(resolve, 500))
-          } catch (error) {
-            console.error(`Error fetching jobs for query "${searchQuery}":`, error)
+      // Also try Adzuna API if credentials are available
+      if (process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY) {
+        try {
+          const adzunaAPI = new AdzunaAPI(
+            process.env.ADZUNA_APP_ID,
+            process.env.ADZUNA_APP_KEY
+          )
+
+          for (const searchQuery of searchQueries.slice(0, 3)) { // Limit to 3 queries
+            try {
+              const apiJobs = await adzunaAPI.searchJobs(searchQuery, location, 1, 25)
+              const filteredJobs = apiJobs.filter(job => job.aiResistanceScore >= 6)
+              jobs.push(...filteredJobs)
+              
+              await new Promise(resolve => setTimeout(resolve, 600))
+            } catch (error) {
+              console.error(`Error fetching from Adzuna for query "${searchQuery}":`, error)
+            }
           }
+        } catch (error) {
+          console.error('Error initializing Adzuna API:', error)
         }
-      } catch (error) {
-        console.error('Error initializing Adzuna API:', error)
       }
+    } catch (error) {
+      console.error('Error in job aggregation:', error)
     }
 
     // Apply filters

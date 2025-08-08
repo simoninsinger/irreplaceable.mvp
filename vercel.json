@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/jobs/refresh",
+      "schedule": "0 */6 * * *"
+    }
+  ],
+  "functions": {
+    "src/app/api/jobs/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/jobs/refresh/route.ts": {
+      "maxDuration": 300
+    }
+  }
+}
