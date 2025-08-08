@@ -15,50 +15,67 @@ export async function GET(request: NextRequest) {
     const aiResistance = searchParams.get('aiResistance')
 
     let jobs: JobListing[] = []
-
-    // Always include seed jobs for immediate content
-    jobs = [...SEED_JOBS]
+    let apiJobsFound = 0
 
     // Initialize job aggregator for multiple sources
     const jobAggregator = new JobAggregator()
+    const enabledSources = jobAggregator.getEnabledSources()
     
+    console.log(`API Check - Enabled sources: ${enabledSources.join(', ')}`)
+    console.log(`API Check - ADZUNA_APP_ID: ${process.env.ADZUNA_APP_ID ? 'Set' : 'Missing'}`)
+    console.log(`API Check - JSEARCH_API_KEY: ${process.env.JSEARCH_API_KEY ? 'Set' : 'Missing'}`)
+    
+    // Use specific query or default AI-resistant queries
+    const searchQueries = query && query !== 'nurse electrician teacher therapist' 
+      ? [query] 
+      : ['nurse', 'electrician', 'teacher'] // Simplified for testing
+
     try {
-      // Use specific query or default AI-resistant queries
-      const searchQueries = query && query !== 'nurse electrician teacher therapist' 
-        ? [query] 
-        : AI_RESISTANT_QUERIES.slice(0, 6) // Use first 6 queries to avoid rate limits
+      // Fetch from JSearch and other aggregated sources first
+      if (enabledSources.length > 0) {
+        console.log(`Fetching from aggregated sources: ${enabledSources.join(', ')}`)
+        const aggregatedJobs = await jobAggregator.aggregateJobs(searchQueries, 'United States')
+        console.log(`Aggregated jobs found: ${aggregatedJobs.length}`)
+        jobs.push(...aggregatedJobs)
+        apiJobsFound += aggregatedJobs.length
+      }
 
-      console.log(`Fetching jobs from sources: ${jobAggregator.getEnabledSources().join(', ')}`)
-      
-      // Fetch from all enabled sources
-      const aggregatedJobs = await jobAggregator.aggregateJobs(searchQueries, location)
-      jobs.push(...aggregatedJobs)
-
-      // Also try Adzuna API if credentials are available
+      // Then try Adzuna API
       if (process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY) {
-        try {
-          const adzunaAPI = new AdzunaAPI(
-            process.env.ADZUNA_APP_ID,
-            process.env.ADZUNA_APP_KEY
-          )
+        console.log('Fetching from Adzuna API...')
+        const adzunaAPI = new AdzunaAPI(
+          process.env.ADZUNA_APP_ID,
+          process.env.ADZUNA_APP_KEY
+        )
 
-          for (const searchQuery of searchQueries.slice(0, 3)) { // Limit to 3 queries
-            try {
-              const apiJobs = await adzunaAPI.searchJobs(searchQuery, location, 1, 25)
-              const filteredJobs = apiJobs.filter(job => job.aiResistanceScore >= 6)
-              jobs.push(...filteredJobs)
-              
-              await new Promise(resolve => setTimeout(resolve, 600))
-            } catch (error) {
-              console.error(`Error fetching from Adzuna for query "${searchQuery}":`, error)
-            }
+        for (const searchQuery of searchQueries.slice(0, 2)) { // Limit to 2 queries for testing
+          try {
+            console.log(`Adzuna search: "${searchQuery}"`)
+            const apiJobs = await adzunaAPI.searchJobs(searchQuery, location, 1, 20)
+            console.log(`Adzuna found ${apiJobs.length} jobs for "${searchQuery}"`)
+            
+            const filteredJobs = apiJobs.filter(job => job.aiResistanceScore >= 6)
+            console.log(`After AI filter: ${filteredJobs.length} jobs`)
+            jobs.push(...filteredJobs)
+            apiJobsFound += filteredJobs.length
+            
+            await new Promise(resolve => setTimeout(resolve, 500))
+          } catch (error) {
+            console.error(`Error fetching from Adzuna for query "${searchQuery}":`, error)
           }
-        } catch (error) {
-          console.error('Error initializing Adzuna API:', error)
         }
       }
     } catch (error) {
       console.error('Error in job aggregation:', error)
+    }
+
+    // Only add seed jobs if no API jobs were found
+    if (apiJobsFound === 0) {
+      console.log('No API jobs found, adding seed jobs as fallback')
+      jobs = [...SEED_JOBS]
+    } else {
+      console.log(`Found ${apiJobsFound} API jobs, adding some seed jobs for variety`)
+      jobs.push(...SEED_JOBS.slice(0, 2)) // Add just 2 seed jobs for variety
     }
 
     // Apply filters
@@ -131,7 +148,15 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(uniqueJobs.length / pageSize),
         hasMore: endIndex < uniqueJobs.length
       },
-      message: `Found ${uniqueJobs.length} AI-resistant jobs`
+      debug: {
+        apiJobsFound,
+        enabledSources,
+        totalAfterFilters: filteredJobs.length,
+        uniqueAfterDedup: uniqueJobs.length
+      },
+      message: apiJobsFound > 0 
+        ? `Found ${apiJobsFound} API jobs + ${SEED_JOBS.length} seed jobs` 
+        : `Using ${SEED_JOBS.length} seed jobs (no API jobs found)`
     })
 
   } catch (error) {
