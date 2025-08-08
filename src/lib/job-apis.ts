@@ -343,6 +343,258 @@ export const SEED_JOBS: JobListing[] = [
     source: 'manual',
     tags: ['teacher', 'education', 'children', 'curriculum'],
     benefits: ['health insurance', 'retirement', 'summer break', 'professional development']
+  },
+  {
+    id: 'seed_4',
+    title: 'Physical Therapist',
+    company: 'Rehab Plus Clinic',
+    location: 'Miami, FL',
+    description: 'Help patients recover from injuries and improve mobility through personalized treatment plans and hands-on therapy.',
+    requirements: [
+      'Doctor of Physical Therapy (DPT)',
+      'State PT License',
+      'CPR certification',
+      '2+ years experience preferred'
+    ],
+    salary: {
+      min: 78000,
+      max: 98000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 9,
+    category: 'Healthcare',
+    remote: false,
+    experience: 'mid',
+    postedDate: new Date(),
+    url: 'https://rehabplus.com/careers',
+    source: 'manual',
+    tags: ['physical therapy', 'healthcare', 'rehabilitation', 'patient care'],
+    benefits: ['health insurance', 'dental', '401k', 'continuing education', 'flexible schedule']
+  },
+  {
+    id: 'seed_5',
+    title: 'Master Plumber',
+    company: 'Elite Plumbing Services',
+    location: 'Phoenix, AZ',
+    description: 'Lead plumbing installations and emergency repairs for residential and commercial properties. Train apprentices and manage complex projects.',
+    requirements: [
+      'Master Plumber License',
+      '10+ years plumbing experience',
+      'Valid driver license',
+      'Own tools preferred'
+    ],
+    salary: {
+      min: 72000,
+      max: 95000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 9,
+    category: 'Skilled Trades',
+    remote: false,
+    experience: 'senior',
+    postedDate: new Date(),
+    url: 'https://eliteplumbing.com/jobs',
+    source: 'manual',
+    tags: ['plumber', 'skilled trade', 'installation', 'emergency repair'],
+    benefits: ['health insurance', 'retirement', 'tool allowance', 'overtime pay']
+  },
+  {
+    id: 'seed_6',
+    title: 'Executive Chef',
+    company: 'The Garden Restaurant',
+    location: 'Seattle, WA',
+    description: 'Lead kitchen operations, create innovative menus, and manage culinary team in upscale dining establishment.',
+    requirements: [
+      'Culinary Arts degree preferred',
+      '8+ years kitchen experience',
+      'Management experience',
+      'Food safety certification'
+    ],
+    salary: {
+      min: 68000,
+      max: 88000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 8,
+    category: 'Creative Arts',
+    remote: false,
+    experience: 'senior',
+    postedDate: new Date(),
+    url: 'https://gardenrestaurant.com/careers',
+    source: 'manual',
+    tags: ['chef', 'culinary', 'creative', 'management'],
+    benefits: ['health insurance', 'meals provided', 'vacation', 'performance bonus']
+  },
+  {
+    id: 'seed_7',
+    title: 'Mental Health Counselor',
+    company: 'Wellness Center',
+    location: 'Portland, OR',
+    description: 'Provide individual and group therapy to clients dealing with mental health challenges. Develop treatment plans and maintain case notes.',
+    requirements: [
+      'Master in Counseling/Psychology',
+      'Licensed Professional Counselor (LPC)',
+      'Crisis intervention training',
+      '3+ years experience'
+    ],
+    salary: {
+      min: 58000,
+      max: 78000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 9,
+    category: 'Human Services',
+    remote: true,
+    experience: 'mid',
+    postedDate: new Date(),
+    url: 'https://wellnesscenter.org/jobs',
+    source: 'manual',
+    tags: ['counselor', 'mental health', 'therapy', 'psychology'],
+    benefits: ['health insurance', 'flexible schedule', 'professional development', 'remote options']
+  },
+  {
+    id: 'seed_8',
+    title: 'Dental Hygienist',
+    company: 'Bright Smile Dental',
+    location: 'Dallas, TX',
+    description: 'Provide preventive dental care, clean teeth, and educate patients about oral health practices in modern dental office.',
+    requirements: [
+      'Associate degree in Dental Hygiene',
+      'State Dental Hygiene License',
+      'CPR certification',
+      'X-ray certification'
+    ],
+    salary: {
+      min: 68000,
+      max: 82000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 8,
+    category: 'Healthcare',
+    remote: false,
+    experience: 'mid',
+    postedDate: new Date(),
+    url: 'https://brightsmile.com/careers',
+    source: 'manual',
+    tags: ['dental hygienist', 'healthcare', 'preventive care', 'patient education'],
+    benefits: ['health insurance', 'dental coverage', '401k', 'paid time off']
+  },
+  {
+    id: 'seed_9',
+    title: 'Fire Captain',
+    company: 'City Fire Department',
+    location: 'San Diego, CA',
+    description: 'Lead firefighting and emergency response operations. Supervise crew and ensure public safety during emergencies and disasters.',
+    requirements: [
+      'Firefighter I & II certification',
+      'EMT certification',
+      '8+ years firefighting experience',
+      'Leadership experience'
+    ],
+    salary: {
+      min: 85000,
+      max: 105000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 9,
+    category: 'Human Services',
+    remote: false,
+    experience: 'senior',
+    postedDate: new Date(),
+    url: 'https://sandiego.gov/fire/jobs',
+    source: 'manual',
+    tags: ['firefighter', 'emergency services', 'leadership', 'public safety'],
+    benefits: ['pension plan', 'health insurance', 'life insurance', 'paid time off']
+  },
+  {
+    id: 'seed_10',
+    title: 'HVAC Technician',
+    company: 'Climate Control Solutions',
+    location: 'Atlanta, GA',
+    description: 'Install, maintain, and repair heating, ventilation, and air conditioning systems in residential and commercial buildings.',
+    requirements: [
+      'HVAC certification',
+      'EPA 608 certification',
+      '3+ years experience',
+      'Valid driver license'
+    ],
+    salary: {
+      min: 52000,
+      max: 72000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 8,
+    category: 'Skilled Trades',
+    remote: false,
+    experience: 'mid',
+    postedDate: new Date(),
+    url: 'https://climatecontrolsolutions.com/jobs',
+    source: 'manual',
+    tags: ['hvac', 'skilled trade', 'installation', 'maintenance'],
+    benefits: ['health insurance', 'tool allowance', 'training', 'overtime opportunities']
+  },
+  {
+    id: 'seed_11',
+    title: 'Occupational Therapist',
+    company: 'Therapy Partners',
+    location: 'Boston, MA',
+    description: 'Help patients develop or recover skills needed for daily living and working through therapeutic activities and exercises.',
+    requirements: [
+      'Master in Occupational Therapy',
+      'OT License',
+      'CPR certification',
+      'Experience with adaptive equipment'
+    ],
+    salary: {
+      min: 82000,
+      max: 98000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 9,
+    category: 'Healthcare',
+    remote: false,
+    experience: 'mid',
+    postedDate: new Date(),
+    url: 'https://therapypartners.com/careers',
+    source: 'manual',
+    tags: ['occupational therapy', 'healthcare', 'rehabilitation', 'adaptive skills'],
+    benefits: ['health insurance', 'continuing education', 'flexible schedule', 'retirement plan']
+  },
+  {
+    id: 'seed_12',
+    title: 'Master Carpenter',
+    company: 'Artisan Woodworks',
+    location: 'Nashville, TN',
+    description: 'Create custom furniture and cabinetry using traditional and modern woodworking techniques. Lead projects from design to completion.',
+    requirements: [
+      '10+ years carpentry experience',
+      'Portfolio of completed work',
+      'Own professional tools',
+      'Blueprint reading skills'
+    ],
+    salary: {
+      min: 58000,
+      max: 78000,
+      currency: 'USD',
+      period: 'yearly'
+    },
+    aiResistanceScore: 9,
+    category: 'Skilled Trades',
+    remote: false,
+    experience: 'senior',
+    postedDate: new Date(),
+    url: 'https://artisanwoodworks.com/jobs',
+    source: 'manual',
+    tags: ['carpenter', 'woodworking', 'craftsmanship', 'custom furniture'],
+    benefits: ['health insurance', 'profit sharing', 'project bonuses', 'creative freedom']
   }
 ]
 
