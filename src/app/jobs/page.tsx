@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { 
   Search, 
   MapPin, 
@@ -12,131 +12,71 @@ import {
   ExternalLink,
   Award,
   Users,
-  Building
+  Building,
+  Loader2
 } from "lucide-react"
+import { JobListing } from "@/lib/job-apis"
 
-// Mock job data
-const sampleJobs = [
-  {
-    id: "1",
-    title: "Physical Therapist",
-    company: "HealthFirst Rehabilitation",
-    location: "San Francisco, CA",
-    salary: "$85,000 - $110,000",
-    experience: "2-5 years",
-    category: "Healthcare & Wellness",
-    aiResistance: "High",
-    isRemote: false,
-    description: "Help patients recover mobility and manage pain through personalized treatment plans. Requires human touch, empathy, and complex problem-solving.",
-    requirements: ["DPT degree", "State license", "2+ years experience", "Strong communication skills"],
-    whyAiResistant: "Requires physical manipulation, emotional support, and complex patient assessment that AI cannot replicate."
-  },
-  {
-    id: "2", 
-    title: "Master Electrician",
-    company: "PowerPro Electric",
-    location: "Austin, TX",
-    salary: "$75,000 - $95,000",
-    experience: "5+ years",
-    category: "Skilled Trades",
-    aiResistance: "High",
-    isRemote: false,
-    description: "Lead electrical installations and repairs in residential and commercial settings. Troubleshoot complex electrical systems and mentor apprentices.",
-    requirements: ["Master Electrician License", "5+ years experience", "Blueprint reading", "Leadership skills"],
-    whyAiResistant: "Hands-on problem solving in unpredictable environments requiring physical dexterity and real-time decision making."
-  },
-  {
-    id: "3",
-    title: "Art Therapist", 
-    company: "Mindful Healing Center",
-    location: "Portland, OR",
-    salary: "$60,000 - $75,000",
-    experience: "1-3 years",
-    category: "Creative Arts",
-    aiResistance: "High",
-    isRemote: false,
-    description: "Use creative arts to help clients express emotions and work through trauma. Combine artistic skills with psychological understanding.",
-    requirements: ["Master's in Art Therapy", "State certification", "Portfolio of work", "Empathy and patience"],
-    whyAiResistant: "Combines human creativity with emotional intelligence and therapeutic relationship building."
-  },
-  {
-    id: "4",
-    title: "Sales Manager - Medical Devices",
-    company: "MedTech Solutions",
-    location: "Chicago, IL", 
-    salary: "$90,000 - $120,000",
-    experience: "3-7 years",
-    category: "Sales & Relations",
-    aiResistance: "High",
-    isRemote: true,
-    description: "Build relationships with healthcare providers to introduce innovative medical devices. Requires deep product knowledge and trust-building.",
-    requirements: ["Bachelor's degree", "Sales experience", "Healthcare industry knowledge", "Relationship building skills"],
-    whyAiResistant: "Complex B2B relationships, emotional intelligence, and consultative selling require human connection."
-  },
-  {
-    id: "5",
-    title: "Preschool Teacher",
-    company: "Little Learners Academy",
-    location: "Denver, CO",
-    salary: "$45,000 - $55,000", 
-    experience: "0-2 years",
-    category: "Education & Training",
-    aiResistance: "High",
-    isRemote: false,
-    description: "Nurture young children's development through play-based learning. Create safe, engaging environments for ages 3-5.",
-    requirements: ["ECE degree or certification", "Background check", "First aid certification", "Patience and creativity"],
-    whyAiResistant: "Child development requires human warmth, adaptability to individual needs, and emotional nurturing."
-  },
-  {
-    id: "6",
-    title: "Plumbing Contractor",
-    company: "AquaFix Plumbing",
-    location: "Phoenix, AZ",
-    salary: "$65,000 - $85,000",
-    experience: "3-5 years", 
-    category: "Skilled Trades",
-    aiResistance: "High",
-    isRemote: false,
-    description: "Diagnose and repair complex plumbing systems. Handle emergency calls and customer service. Opportunity for business ownership.",
-    requirements: ["Plumbing license", "3+ years experience", "Own tools and vehicle", "Problem-solving skills"],
-    whyAiResistant: "Every job site is unique, requiring physical problem-solving and customer interaction in unpredictable situations."
-  }
-]
 
 const categories = [
   "All Categories",
-  "Healthcare & Wellness", 
+  "Healthcare", 
   "Skilled Trades",
   "Creative Arts",
   "Human Services",
-  "Education & Training",
+  "Education",
   "Sales & Relations",
   "Leadership & Management",
-  "Entrepreneurship"
+  "Other"
 ]
 
-const aiResistanceLevels = ["All Levels", "High", "Medium"]
-const experienceLevels = ["All Experience", "0-2 years", "2-5 years", "5+ years"]
+const experienceLevels = ["All Experience", "entry", "mid", "senior", "executive"]
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [location, setLocation] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
-  const [selectedResistance, setSelectedResistance] = useState("All Levels")
   const [selectedExperience, setSelectedExperience] = useState("All Experience")
+  const [minAIResistance, setMinAIResistance] = useState("6")
   const [showFilters, setShowFilters] = useState(false)
   const [savedJobs, setSavedJobs] = useState<string[]>([])
+  const [jobs, setJobs] = useState<JobListing[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [totalJobs, setTotalJobs] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const filteredJobs = sampleJobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.company.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesLocation = location === "" || job.location.toLowerCase().includes(location.toLowerCase())
-    const matchesCategory = selectedCategory === "All Categories" || job.category === selectedCategory
-    const matchesResistance = selectedResistance === "All Levels" || job.aiResistance === selectedResistance
-    const matchesExperience = selectedExperience === "All Experience" || job.experience === selectedExperience
+  // Fetch jobs from API
+  useEffect(() => {
+    fetchJobs()
+  }, [searchTerm, location, selectedCategory, selectedExperience, minAIResistance, currentPage])
 
-    return matchesSearch && matchesLocation && matchesCategory && matchesResistance && matchesExperience
-  })
+  const fetchJobs = async () => {
+    try {
+      setIsLoading(true)
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        ...(searchTerm && { q: searchTerm }),
+        ...(location && { location: location }),
+        ...(selectedCategory !== "All Categories" && { category: selectedCategory }),
+        ...(selectedExperience !== "All Experience" && { experience: selectedExperience }),
+        aiResistance: minAIResistance
+      })
+
+      const response = await fetch(`/api/jobs?${params}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setJobs(data.data.jobs)
+        setTotalJobs(data.data.total)
+      } else {
+        console.error('Error fetching jobs:', data.message)
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const toggleSaveJob = (jobId: string) => {
     setSavedJobs(prev => 
@@ -146,11 +86,35 @@ export default function JobsPage() {
     )
   }
 
-  const getResistanceBadgeColor = (level: string) => {
+  const getResistanceBadgeColor = (score: number) => {
+    if (score >= 8) return "bg-green-100 text-green-800 border-green-200"
+    if (score >= 6) return "bg-yellow-100 text-yellow-800 border-yellow-200"
+    return "bg-red-100 text-red-800 border-red-200"
+  }
+
+  const formatSalary = (salary?: { min?: number; max?: number; currency: string; period: string }) => {
+    if (!salary) return 'Salary not listed'
+    const { min, max, currency, period } = salary
+    const formatAmount = (amount: number) => {
+      if (period === 'yearly') return `$${(amount / 1000).toFixed(0)}k`
+      if (period === 'hourly') return `$${amount}/hr`
+      return `$${amount}`
+    }
+    
+    if (min && max) {
+      return `${formatAmount(min)} - ${formatAmount(max)}`
+    }
+    if (min) return `${formatAmount(min)}+`
+    return 'Salary not listed'
+  }
+
+  const getExperienceLabel = (level: string) => {
     switch (level) {
-      case "High": return "bg-green-100 text-green-800 border-green-200"
-      case "Medium": return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      default: return "bg-gray-100 text-gray-800 border-gray-200"
+      case 'entry': return 'Entry Level'
+      case 'mid': return 'Mid Level'
+      case 'senior': return 'Senior Level'
+      case 'executive': return 'Executive'
+      default: return level
     }
   }
 
@@ -216,15 +180,16 @@ export default function JobsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">AI Resistance</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Min AI Resistance</label>
                   <select
-                    value={selectedResistance}
-                    onChange={(e) => setSelectedResistance(e.target.value)}
+                    value={minAIResistance}
+                    onChange={(e) => setMinAIResistance(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    {aiResistanceLevels.map(level => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
+                    <option value="1">Any Level (1+)</option>
+                    <option value="6">Medium (6+)</option>
+                    <option value="8">High (8+)</option>
+                    <option value="9">Very High (9+)</option>
                   </select>
                 </div>
                 <div>
@@ -249,20 +214,27 @@ export default function JobsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <p className="text-gray-600">
-            Found <span className="font-semibold">{filteredJobs.length}</span> AI-resistant jobs
+            {isLoading ? (
+              <span className="flex items-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Loading AI-resistant jobs...
+              </span>
+            ) : (
+              <span>Found <span className="font-semibold">{totalJobs}</span> AI-resistant jobs</span>
+            )}
           </p>
         </div>
 
         <div className="space-y-6">
-          {filteredJobs.map(job => (
+          {jobs.map(job => (
             <div key={job.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
                     <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
-                    <span className={`px-2 py-1 text-xs font-medium border rounded-full ${getResistanceBadgeColor(job.aiResistance)}`}>
+                    <span className={`px-2 py-1 text-xs font-medium border rounded-full ${getResistanceBadgeColor(job.aiResistanceScore)}`}>
                       <Shield className="inline h-3 w-3 mr-1" />
-                      {job.aiResistance} AI-Resistance
+                      {job.aiResistanceScore}/10 AI-Resistance
                     </span>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
@@ -276,22 +248,25 @@ export default function JobsPage() {
                     </span>
                     <span className="flex items-center">
                       <DollarSign className="h-4 w-4 mr-1" />
-                      {job.salary}
+                      {formatSalary(job.salary)}
                     </span>
                     <span className="flex items-center">
                       <Clock className="h-4 w-4 mr-1" />
-                      {job.experience}
+                      {getExperienceLabel(job.experience)}
                     </span>
                   </div>
                   <div className="mb-3">
                     <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                       {job.category}
                     </span>
-                    {job.isRemote && (
+                    {job.remote && (
                       <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full ml-2">
                         Remote
                       </span>
                     )}
+                    <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full ml-2">
+                      {job.source}
+                    </span>
                   </div>
                 </div>
                 <button
@@ -308,15 +283,23 @@ export default function JobsPage() {
 
               <p className="text-gray-700 mb-4">{job.description}</p>
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                <div className="flex items-start space-x-2">
-                  <Award className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-medium text-green-900 mb-1">Why this job is AI-resistant:</h4>
-                    <p className="text-sm text-green-800">{job.whyAiResistant}</p>
+              {job.tags.length > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                  <div className="flex items-start space-x-2">
+                    <Award className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-green-900 mb-1">AI-Resistant Skills:</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {job.tags.slice(0, 5).map((tag, index) => (
+                          <span key={index} className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex flex-wrap gap-2 mb-4">
                 {job.requirements.map((req, index) => (
@@ -327,19 +310,26 @@ export default function JobsPage() {
               </div>
 
               <div className="flex space-x-3">
-                <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center space-x-2">
+                <a 
+                  href={job.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center space-x-2"
+                >
                   <ExternalLink className="h-4 w-4" />
                   <span>Apply Now</span>
-                </button>
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
-                  View Details
-                </button>
+                </a>
+                {job.benefits.length > 0 && (
+                  <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
+                    View Benefits ({job.benefits.length})
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
 
-        {filteredJobs.length === 0 && (
+        {!isLoading && jobs.length === 0 && (
           <div className="text-center py-12">
             <div className="mb-4">
               <Search className="h-12 w-12 text-gray-400 mx-auto" />
@@ -351,8 +341,9 @@ export default function JobsPage() {
                 setSearchTerm("")
                 setLocation("")
                 setSelectedCategory("All Categories")
-                setSelectedResistance("All Levels")
+                setMinAIResistance("6")
                 setSelectedExperience("All Experience")
+                setCurrentPage(1)
               }}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
