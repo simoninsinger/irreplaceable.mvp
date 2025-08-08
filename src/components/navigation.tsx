@@ -14,7 +14,10 @@ import {
   LogOut,
   Calculator,
   TrendingUp,
-  Briefcase
+  Briefcase,
+  Bell,
+  DollarSign,
+  Clock
 } from "lucide-react"
 
 export function Navigation() {
@@ -63,6 +66,27 @@ export function Navigation() {
             >
               <Calculator className="h-4 w-4" />
               <span>ROI Calculator</span>
+            </Link>
+            <Link 
+              href="/job-alerts" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Bell className="h-4 w-4" />
+              <span>Job Alerts</span>
+            </Link>
+            <Link 
+              href="/salary-negotiation" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <DollarSign className="h-4 w-4" />
+              <span>Salary Tools</span>
+            </Link>
+            <Link 
+              href="/career-transition" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Clock className="h-4 w-4" />
+              <span>Transitions</span>
             </Link>
             <Link 
               href="/employers/post-job" 
@@ -164,6 +188,27 @@ export function Navigation() {
               onClick={() => setIsOpen(false)}
             >
               ROI Calculator
+            </Link>
+            <Link
+              href="/job-alerts"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Job Alerts
+            </Link>
+            <Link
+              href="/salary-negotiation"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Salary Tools
+            </Link>
+            <Link
+              href="/career-transition"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Transitions
             </Link>
             <Link
               href="/employers/post-job"

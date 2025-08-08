@@ -395,7 +395,7 @@ export const AI_RESISTANT_CAREERS: CareerPath[] = [
     ]
   },
   {
-    id: 'creative_therapist',
+    id: 'healthcare_physical_therapist',
     title: 'Physical Therapist',
     description: 'Help patients recover from injuries and improve mobility through personalized treatment plans and hands-on therapy.',
     aiResistanceScore: 9,
@@ -415,6 +415,236 @@ export const AI_RESISTANT_CAREERS: CareerPath[] = [
       'Personalized treatment based on individual assessment',
       'Motivational and emotional support for patients',
       'Complex movement analysis and adjustment'
+    ]
+  },
+  {
+    id: 'education_teacher',
+    title: 'Elementary School Teacher',
+    description: 'Educate and nurture young children, developing lesson plans, managing classrooms, and fostering social-emotional growth.',
+    aiResistanceScore: 8,
+    averageSalary: {
+      min: 42000,
+      max: 68000,
+      currency: 'USD'
+    },
+    growthOutlook: 'medium',
+    education: ['Bachelor in Education', 'Teaching License', 'Student Teaching Experience'],
+    skills: ['Classroom management', 'Curriculum development', 'Child psychology', 'Communication', 'Patience'],
+    certifications: ['Teaching License', 'CPR/First Aid', 'Special Education (optional)'],
+    industries: ['Public Schools', 'Private Schools', 'Charter Schools', 'Tutoring'],
+    relatedJobs: ['Principal', 'Curriculum Coordinator', 'Special Education Teacher'],
+    whyAIResistant: [
+      'Requires emotional intelligence and human connection',
+      'Complex behavioral management and adaptation',
+      'Creative lesson planning for diverse learning styles',
+      'Nurturing social and emotional development'
+    ]
+  },
+  {
+    id: 'trades_plumber',
+    title: 'Plumber',
+    description: 'Install, repair, and maintain plumbing systems in residential and commercial buildings, handling emergencies and complex installations.',
+    aiResistanceScore: 9,
+    averageSalary: {
+      min: 48000,
+      max: 78000,
+      currency: 'USD'
+    },
+    growthOutlook: 'high',
+    education: ['High school diploma', 'Plumbing apprenticeship or trade school'],
+    skills: ['Plumbing systems knowledge', 'Problem-solving', 'Physical strength', 'Customer service'],
+    certifications: ['Plumbing License', 'Backflow Prevention', 'OSHA Safety'],
+    industries: ['Construction', 'Residential Services', 'Commercial Maintenance', 'Emergency Services'],
+    relatedJobs: ['Master Plumber', 'Plumbing Contractor', 'Pipe Fitter'],
+    whyAIResistant: [
+      'Requires physical access to unique spaces',
+      'Complex problem-solving in unpredictable situations',
+      'Emergency response requiring human judgment',
+      'Customer interaction and trust-building'
+    ]
+  },
+  {
+    id: 'culinary_chef',
+    title: 'Professional Chef',
+    description: 'Create innovative dishes, manage kitchen operations, and lead culinary teams in restaurants and hospitality venues.',
+    aiResistanceScore: 8,
+    averageSalary: {
+      min: 45000,
+      max: 85000,
+      currency: 'USD'
+    },
+    growthOutlook: 'medium',
+    education: ['Culinary arts degree or apprenticeship', 'Kitchen experience'],
+    skills: ['Culinary techniques', 'Creativity', 'Leadership', 'Time management', 'Food safety'],
+    certifications: ['ServSafe Manager', 'Specialized cuisine certifications'],
+    industries: ['Restaurants', 'Hotels', 'Catering', 'Food Services'],
+    relatedJobs: ['Sous Chef', 'Executive Chef', 'Food & Beverage Manager'],
+    whyAIResistant: [
+      'Requires creativity and artistic expression',
+      'Taste and sensory evaluation cannot be automated',
+      'Cultural and personal preferences in cuisine',
+      'Team leadership and kitchen management'
+    ]
+  },
+  {
+    id: 'healthcare_dental_hygienist',
+    title: 'Dental Hygienist',
+    description: 'Provide preventive dental care, clean teeth, examine patients, and educate about oral health practices.',
+    aiResistanceScore: 8,
+    averageSalary: {
+      min: 65000,
+      max: 85000,
+      currency: 'USD'
+    },
+    growthOutlook: 'high',
+    education: ['Associate degree in Dental Hygiene'],
+    skills: ['Dental procedures', 'Patient care', 'Attention to detail', 'Communication', 'Manual dexterity'],
+    certifications: ['Dental Hygiene License', 'CPR', 'Local Anesthesia (some states)'],
+    industries: ['Dental Offices', 'Clinics', 'Public Health', 'Schools'],
+    relatedJobs: ['Dentist', 'Dental Assistant', 'Public Health Dental Hygienist'],
+    whyAIResistant: [
+      'Requires precise manual dexterity and touch',
+      'Patient comfort and anxiety management',
+      'Visual and tactile examination skills',
+      'Personalized patient education and motivation'
+    ]
+  },
+  {
+    id: 'emergency_firefighter',
+    title: 'Firefighter',
+    description: 'Respond to fires, medical emergencies, and disasters while protecting lives and property in dangerous situations.',
+    aiResistanceScore: 9,
+    averageSalary: {
+      min: 50000,
+      max: 80000,
+      currency: 'USD'
+    },
+    growthOutlook: 'medium',
+    education: ['High school diploma', 'Fire academy training', 'EMT certification'],
+    skills: ['Physical fitness', 'Emergency response', 'Teamwork', 'Problem-solving', 'Courage'],
+    certifications: ['Firefighter I & II', 'EMT', 'CPR', 'Hazmat'],
+    industries: ['Fire Departments', 'Emergency Services', 'Industrial Safety', 'Airport Fire'],
+    relatedJobs: ['Fire Captain', 'Fire Inspector', 'Emergency Medical Technician'],
+    whyAIResistant: [
+      'Life-or-death decision making under extreme pressure',
+      'Physical rescue operations requiring human strength',
+      'Unpredictable emergency situations',
+      'Community trust and public safety responsibility'
+    ]
+  },
+  {
+    id: 'personal_massage_therapist',
+    title: 'Massage Therapist',
+    description: 'Provide therapeutic massage treatments to help clients manage pain, reduce stress, and improve wellness.',
+    aiResistanceScore: 9,
+    averageSalary: {
+      min: 35000,
+      max: 65000,
+      currency: 'USD'
+    },
+    growthOutlook: 'high',
+    education: ['Massage therapy program (500+ hours)', 'Anatomy and physiology'],
+    skills: ['Manual therapy techniques', 'Anatomy knowledge', 'Empathy', 'Physical stamina'],
+    certifications: ['Massage Therapy License', 'CPR', 'Specialized techniques'],
+    industries: ['Spas', 'Healthcare', 'Sports medicine', 'Private practice'],
+    relatedJobs: ['Physical Therapist', 'Spa Manager', 'Sports Massage Therapist'],
+    whyAIResistant: [
+      'Requires human touch and therapeutic presence',
+      'Individualized treatment based on client needs',
+      'Emotional support and stress relief',
+      'Complex muscle and tissue assessment'
+    ]
+  },
+  {
+    id: 'trades_hvac_technician',
+    title: 'HVAC Technician',
+    description: 'Install, maintain, and repair heating, ventilation, and air conditioning systems in residential and commercial buildings.',
+    aiResistanceScore: 8,
+    averageSalary: {
+      min: 45000,
+      max: 75000,
+      currency: 'USD'
+    },
+    growthOutlook: 'high',
+    education: ['Technical school or apprenticeship', 'HVAC certification'],
+    skills: ['Mechanical systems', 'Electrical knowledge', 'Problem-solving', 'Customer service'],
+    certifications: ['EPA 608 Certification', 'NATE Certification', 'State licenses'],
+    industries: ['HVAC contractors', 'Building maintenance', 'Construction', 'Manufacturing'],
+    relatedJobs: ['HVAC Supervisor', 'Building Engineer', 'Energy Auditor'],
+    whyAIResistant: [
+      'Complex mechanical troubleshooting',
+      'Crawling in tight spaces and physical installation',
+      'Customer interaction and problem explanation',
+      'Varied work environments requiring adaptation'
+    ]
+  },
+  {
+    id: 'creative_hair_stylist',
+    title: 'Hair Stylist',
+    description: 'Cut, color, and style hair while building client relationships and staying current with fashion trends.',
+    aiResistanceScore: 8,
+    averageSalary: {
+      min: 30000,
+      max: 65000,
+      currency: 'USD'
+    },
+    growthOutlook: 'medium',
+    education: ['Cosmetology school (1000-1500 hours)', 'State licensing'],
+    skills: ['Haircutting techniques', 'Color theory', 'Customer service', 'Creativity', 'Trends awareness'],
+    certifications: ['Cosmetology License', 'Specialized technique certifications'],
+    industries: ['Salons', 'Spas', 'Film/TV', 'Freelance'],
+    relatedJobs: ['Salon Owner', 'Color Specialist', 'Platform Artist'],
+    whyAIResistant: [
+      'Artistic creativity and personal style interpretation',
+      'Building personal relationships with clients',
+      'Manual dexterity and artistic skill',
+      'Fashion trends and individual preferences'
+    ]
+  },
+  {
+    id: 'healthcare_occupational_therapist',
+    title: 'Occupational Therapist',
+    description: 'Help patients develop or recover skills needed for daily living and working through therapeutic activities.',
+    aiResistanceScore: 9,
+    averageSalary: {
+      min: 75000,
+      max: 95000,
+      currency: 'USD'
+    },
+    growthOutlook: 'high',
+    education: ['Master in Occupational Therapy (MOT)'],
+    skills: ['Assessment skills', 'Treatment planning', 'Patient motivation', 'Adaptive techniques'],
+    certifications: ['OT License', 'CPR', 'Specialty certifications'],
+    industries: ['Healthcare', 'Rehabilitation', 'Schools', 'Mental health'],
+    relatedJobs: ['Physical Therapist', 'Rehabilitation Director', 'Hand Therapist'],
+    whyAIResistant: [
+      'Individualized assessment and treatment planning',
+      'Creative problem-solving for daily living',
+      'Emotional support and motivation',
+      'Hands-on therapeutic intervention'
+    ]
+  },
+  {
+    id: 'social_counselor',
+    title: 'Mental Health Counselor',
+    description: 'Provide therapy and support to individuals dealing with mental health, emotional, and behavioral challenges.',
+    aiResistanceScore: 9,
+    averageSalary: {
+      min: 45000,
+      max: 75000,
+      currency: 'USD'
+    },
+    growthOutlook: 'high',
+    education: ['Master in Counseling or Psychology', 'Clinical training'],
+    skills: ['Active listening', 'Empathy', 'Assessment', 'Therapeutic techniques', 'Crisis intervention'],
+    certifications: ['Licensed Professional Counselor (LPC)', 'Specialty therapy certifications'],
+    industries: ['Mental health clinics', 'Hospitals', 'Private practice', 'Community centers'],
+    relatedJobs: ['Clinical Psychologist', 'Social Worker', 'Substance Abuse Counselor'],
+    whyAIResistant: [
+      'Requires deep human empathy and understanding',
+      'Complex emotional and psychological assessment',
+      'Building therapeutic relationships and trust',
+      'Crisis intervention requiring human judgment'
     ]
   }
 ]

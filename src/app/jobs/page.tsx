@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { 
   Search, 
   MapPin, 
@@ -13,7 +14,9 @@ import {
   Award,
   Users,
   Building,
-  Loader2
+  Loader2,
+  Calculator,
+  X
 } from "lucide-react"
 import { JobListing } from "@/lib/job-apis"
 
@@ -44,6 +47,7 @@ export default function JobsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [totalJobs, setTotalJobs] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedJobBenefits, setSelectedJobBenefits] = useState<JobListing | null>(null)
 
   // Fetch jobs from API
   useEffect(() => {
@@ -319,15 +323,104 @@ export default function JobsPage() {
                   <ExternalLink className="h-4 w-4" />
                   <span>Apply Now</span>
                 </a>
-                {job.benefits.length > 0 && (
-                  <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">
-                    View Benefits ({job.benefits.length})
-                  </button>
-                )}
+                <div className="flex space-x-2">
+                  {job.benefits.length > 0 && (
+                    <button 
+                      onClick={() => setSelectedJobBenefits(job)}
+                      className="px-4 py-2 border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 font-medium"
+                    >
+                      Benefits ({job.benefits.length})
+                    </button>
+                  )}
+                  <Link
+                    href={`/roi-calculator?career=${job.category.toLowerCase().replace(/\s+/g, '_')}`}
+                    className="px-4 py-2 border border-green-300 text-green-600 rounded-lg hover:bg-green-50 font-medium flex items-center space-x-1"
+                  >
+                    <Calculator className="h-4 w-4" />
+                    <span>ROI</span>
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Benefits Modal */}
+        {selectedJobBenefits && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Benefits & Perks
+                  </h2>
+                  <button
+                    onClick={() => setSelectedJobBenefits(null)}
+                    className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    {selectedJobBenefits.title} at {selectedJobBenefits.company}
+                  </h3>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+                    <MapPin className="h-4 w-4" />
+                    <span>{selectedJobBenefits.location}</span>
+                    <span>•</span>
+                    <DollarSign className="h-4 w-4" />
+                    <span>{formatSalary(selectedJobBenefits.salary)}</span>
+                  </div>
+                </div>
+
+                {selectedJobBenefits.benefits.length > 0 ? (
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-900 mb-3">Available Benefits:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {selectedJobBenefits.benefits.map((benefit, index) => (
+                        <div key={index} className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                          <span className="text-gray-800 font-medium capitalize">{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <div className="mb-4">
+                      <Award className="h-12 w-12 text-gray-400 mx-auto" />
+                    </div>
+                    <p className="text-lg font-medium mb-2">Benefits Information Not Available</p>
+                    <p className="text-sm">Contact the employer directly to learn about their benefits package.</p>
+                  </div>
+                )}
+
+                <div className="mt-6 pt-6 border-t">
+                  <div className="flex space-x-3">
+                    <a
+                      href={selectedJobBenefits.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center space-x-2"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      <span>Apply for This Position</span>
+                    </a>
+                    <Link
+                      href={`/roi-calculator?career=${selectedJobBenefits.category.toLowerCase().replace(/\s+/g, '_')}`}
+                      className="px-4 py-3 border border-green-300 text-green-600 rounded-lg hover:bg-green-50 font-medium flex items-center space-x-2"
+                    >
+                      <Calculator className="h-4 w-4" />
+                      <span>ROI Calculator</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {!isLoading && jobs.length === 0 && (
           <div className="text-center py-12">
