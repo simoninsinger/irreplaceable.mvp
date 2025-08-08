@@ -17,7 +17,11 @@ import {
   Briefcase,
   Bell,
   DollarSign,
-  Clock
+  Clock,
+  BarChart3,
+  Gift,
+  Target,
+  Building
 } from "lucide-react"
 
 export function Navigation() {
@@ -87,6 +91,34 @@ export function Navigation() {
             >
               <Clock className="h-4 w-4" />
               <span>Transitions</span>
+            </Link>
+            <Link 
+              href="/market-trends" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Market Trends</span>
+            </Link>
+            <Link 
+              href="/referrals" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Gift className="h-4 w-4" />
+              <span>Referrals</span>
+            </Link>
+            <Link 
+              href="/skills-matching" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Target className="h-4 w-4" />
+              <span>Skills Match</span>
+            </Link>
+            <Link 
+              href="/company-reviews" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Building className="h-4 w-4" />
+              <span>Reviews</span>
             </Link>
             <Link 
               href="/employers/post-job" 
@@ -209,6 +241,34 @@ export function Navigation() {
               onClick={() => setIsOpen(false)}
             >
               Transitions
+            </Link>
+            <Link
+              href="/market-trends"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Market Trends
+            </Link>
+            <Link
+              href="/referrals"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Referrals
+            </Link>
+            <Link
+              href="/skills-matching"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Skills Match
+            </Link>
+            <Link
+              href="/company-reviews"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Reviews
             </Link>
             <Link
               href="/employers/post-job"
