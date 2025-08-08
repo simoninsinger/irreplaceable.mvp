@@ -11,7 +11,10 @@ import {
   BookOpen, 
   CheckCircle, 
   User,
-  LogOut
+  LogOut,
+  Calculator,
+  TrendingUp,
+  Briefcase
 } from "lucide-react"
 
 export function Navigation() {
@@ -48,11 +51,25 @@ export function Navigation() {
               <span>Assessment</span>
             </Link>
             <Link 
-              href="/learn" 
+              href="/careers" 
               className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
             >
-              <BookOpen className="h-4 w-4" />
-              <span>Learn</span>
+              <TrendingUp className="h-4 w-4" />
+              <span>Careers</span>
+            </Link>
+            <Link 
+              href="/roi-calculator" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Calculator className="h-4 w-4" />
+              <span>ROI Calculator</span>
+            </Link>
+            <Link 
+              href="/employers/post-job" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium"
+            >
+              <Briefcase className="h-4 w-4" />
+              <span>Post Jobs</span>
             </Link>
 
             {/* User Authentication */}
@@ -135,11 +152,25 @@ export function Navigation() {
               Assessment
             </Link>
             <Link
-              href="/learn"
+              href="/careers"
               className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
               onClick={() => setIsOpen(false)}
             >
-              Learn
+              Careers
+            </Link>
+            <Link
+              href="/roi-calculator"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              ROI Calculator
+            </Link>
+            <Link
+              href="/employers/post-job"
+              className="block px-3 py-2 text-gray-700 hover:text-blue-600 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Post Jobs
             </Link>
             
             {session ? (
